@@ -1,0 +1,10 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Install deps (server+client)",
+			"type": "shell",
+			"command": "bash -lc 'set -euo pipefail\ncd web-app/servers && npm ci || npm install\ncd ../client && npm ci || npm install\n'"
+		}
+	]
+}

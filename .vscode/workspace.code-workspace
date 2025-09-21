@@ -1,0 +1,50 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "terminal.integrated.defaultProfile.osx": "zsh",
+        "workbench.startupEditor": "readme",
+        "files.associations": {
+            "*.js": "javascript",
+            "*.jsx": "javascriptreact",
+            "*.json": "jsonc"
+        },
+        "emmet.includeLanguages": {
+            "javascript": "javascriptreact"
+        },
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": "explicit"
+        },
+        "eslint.workingDirectories": [
+            "web-app/client",
+            "web-app/servers"
+        ],
+        "search.exclude": {
+            "**/node_modules": true,
+            "**/dist": true,
+            "**/build": true,
+            "**/.git": true
+        },
+        "files.exclude": {
+            "**/node_modules": true,
+            "**/.git": true,
+            "**/.DS_Store": true,
+            "**/build": true
+        }
+    },
+    "extensions": {
+        "recommendations": [
+            "ms-vscode.vscode-eslint",
+            "esbenp.prettier-vscode",
+            "ms-vscode.vscode-json",
+            "bradlc.vscode-tailwindcss",
+            "formulahendry.auto-rename-tag",
+            "christian-kohler.path-intellisense",
+            "ms-vscode.vscode-typescript-next"
+        ]
+    }
+}
