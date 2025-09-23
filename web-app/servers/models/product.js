@@ -1,6 +1,7 @@
 const network = require('../fabric/network.js');
 const apiResponse = require('../utils/apiResponse.js');
 const devStore = require('../utils/devStore');
+const audit = require('../services/audit');
 
 // Dev-mode persisted storage
 const dev = process.env.DEV_FAKE_STORAGE === 'true';
@@ -11,7 +12,9 @@ exports.createProduct = async information => {
         const productId = `Product${devStore.inc('product')}`;
         const now = new Date().toISOString();
         const rec = { ProductID: productId, Name: name, ManufacturerID: id, Status: 'Available', Price: Number(price), Date: { ManufactureDate: now } };
-        devStore.addProduct(productId, rec);
+    devStore.addProduct(productId, rec);
+    audit.upsertProduct(rec);
+    audit.recordProductEvent({ type: 'create', productId, by: id, price: Number(price) });
         return apiResponse.createModelRes(200, 'Success', rec);
     }
     const networkObj = await network.connect(true, false, false, id);
@@ -32,7 +35,9 @@ exports.updateProduct = async ( isManufacturer, isMiddlemen, isConsumer ,informa
         const fields = {};
         if (name) fields.Name = name;
         if (price !== undefined && price !== null) fields.Price = Number(price);
-        const updated = devStore.updateProduct(productId, fields);
+    const updated = devStore.updateProduct(productId, fields);
+    audit.upsertProduct(updated);
+    audit.recordProductEvent({ type: 'update', productId, by: id, fields });
         return apiResponse.createModelRes(200, 'Success', updated);
     }
 
@@ -91,6 +96,8 @@ exports.updateStatusDev = (productId, fields = {}) => {
     if (!dev) return apiResponse.createModelRes(400, 'Not available');
     const updated = devStore.updateProduct(productId, fields);
     if (!updated) return apiResponse.createModelRes(404, 'Product not found');
+    audit.upsertProduct(updated);
+    audit.recordProductEvent({ type: 'status', productId, fields });
     return apiResponse.createModelRes(200, 'Success', updated);
 };
 

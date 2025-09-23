@@ -2,6 +2,8 @@ const network = require('../fabric/network.js');
 const apiResponse = require('../utils/apiResponse.js');
 const authenticateUtil = require('../utils/authenticate.js');
 const devStore = require('../utils/devStore');
+const { db } = require('../utils/db');
+const audit = require('../services/audit');
 
 const dev = process.env.DEV_FAKE_STORAGE === 'true';
 
@@ -13,6 +15,7 @@ exports.signup = async (isManufacturer, isMiddlemen, isConsumer, information) =>
         const userId = `User${devStore.inc('user')}`;
         const rec = { Name: name, UserType: userType, Address: address, Email: email, Password: password, UserID: userId };
         devStore.addUser(rec);
+        audit.recordSignup(rec);
         return apiResponse.createModelRes(200, 'Success', rec);
     }
     const networkObj = await network.connect(isManufacturer, isMiddlemen, isConsumer, id);
@@ -37,9 +40,10 @@ exports.signin = async (isManufacturer, isMiddlemen, isConsumer, information) =>
             (u.Email && String(u.Email).toLowerCase() === lc) ||
             (u.Name && String(u.Name).toLowerCase() === lc)
         ) && u.Password === password);
-        if (!found) return apiResponse.createModelRes(401, 'Invalid credentials');
-        const { Name, UserType } = found;
+        if (!found) { audit.recordSignin({ id: input, ok: false }); return apiResponse.createModelRes(401, 'Invalid credentials'); }
+        const { Name, UserType, UserID } = found;
         const accessToken = authenticateUtil.generateAccessToken({ id, UserType, Name });
+        audit.recordSignin({ id: UserID, ok: true });
         return apiResponse.createModelRes(200, 'Success', { id, UserType, Name, accessToken });
     }
     const networkObj = await network.connect(isManufacturer, isMiddlemen, isConsumer, id);

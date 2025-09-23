@@ -1,0 +1,60 @@
+{
+  "counters": {
+    "product": 2,
+    "user": 3
+  },
+  "products": [
+    {
+      "Key": "Product1",
+      "Record": {
+        "ProductID": "Product1",
+        "Name": "TestPhone",
+        "ManufacturerID": "admin",
+        "Status": "Available",
+        "Price": 12345,
+        "Date": {
+          "ManufactureDate": "2025-09-23T15:31:06.230Z"
+        }
+      }
+    },
+    {
+      "Key": "Product2",
+      "Record": {
+        "ProductID": "Product2",
+        "Name": "PhoneX",
+        "ManufacturerID": "admin",
+        "Status": "Available",
+        "Price": 999,
+        "Date": {
+          "ManufactureDate": "2025-09-23T15:33:21.226Z"
+        }
+      }
+    }
+  ],
+  "users": [
+    {
+      "Name": "admin",
+      "UserType": "admin",
+      "Address": "local",
+      "Email": "admin@local",
+      "Password": "adminpw",
+      "UserID": "admin"
+    },
+    {
+      "Name": "TestUser",
+      "UserType": "manufacturer",
+      "Address": "Hyd",
+      "Email": "testuser@example.com",
+      "Password": "pw123",
+      "UserID": "User2"
+    },
+    {
+      "Name": "Rahul",
+      "UserType": "wholesaler",
+      "Address": "hyderabad",
+      "Email": "rahulcbit29@gmail.com",
+      "Password": "kauhsik@8020",
+      "UserID": "User3"
+    }
+  ]
+}

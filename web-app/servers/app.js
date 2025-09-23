@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const express = require('express');
 const morgan = require('morgan');
+const path = require('path');
 
 // const apiResponse = require('./utils/apiResponse.js');
 const network = require('./fabric/network.js');
@@ -28,6 +29,19 @@ async function main() {
     app.get('/health', (_req, res) => res.status(200).json({ status: 'ok', dev }));
 
     app.use('/', router);
+
+    // Optionally serve the built React client from ../client/build
+    // Enable by setting environment variable SERVE_CLIENT=true
+    if (process.env.SERVE_CLIENT === 'true') {
+        const clientBuildPath = path.join(__dirname, '../client/build');
+        console.log('Static client serving enabled from:', clientBuildPath);
+        app.use(express.static(clientBuildPath));
+        // For any GET request not handled above, serve index.html (SPA fallback)
+        app.get('*', (req, res) => {
+            if (req.method !== 'GET') return res.status(404).end();
+            res.sendFile(path.join(clientBuildPath, 'index.html'));
+        });
+    }
     // app.use((_req, res) => {
     //     return apiResponse.notFound(res);
     // });

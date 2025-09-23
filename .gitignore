@@ -1,3 +1,4 @@
 web-app/servers/node_modules
 web-app/servers/identity
 artifacts/network/
+web-app/servers/db.json
