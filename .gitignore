@@ -5,3 +5,16 @@ web-app/servers/db.json
 web-app/servers/.devdata.json
 web-app/servers/wallets/**
 *.DS_Store
+# Client ignores
+web-app/client/node_modules
+web-app/client/build
+
+# Server logs
+web-app/servers/server.dev.log
+*.log
+
+# Local samples (not needed in repo)
+web-app/servers/fabric-samples/
+
+# Environment files
+.env

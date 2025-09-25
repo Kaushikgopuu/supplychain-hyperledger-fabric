@@ -1,7 +1,7 @@
 {
   "counters": {
-    "product": 2,
-    "user": 3
+    "product": 3,
+    "user": 5
   },
   "products": [
     {
@@ -27,6 +27,19 @@
         "Price": 999,
         "Date": {
           "ManufactureDate": "2025-09-23T15:33:21.226Z"
+        }
+      }
+    },
+    {
+      "Key": "Product3",
+      "Record": {
+        "ProductID": "Product3",
+        "Name": "Banana",
+        "ManufacturerID": "admin",
+        "Status": "Available",
+        "Price": 100,
+        "Date": {
+          "ManufactureDate": "2025-09-25T12:59:56.879Z"
         }
       }
     }
@@ -55,6 +68,22 @@
       "Email": "rahulcbit29@gmail.com",
       "Password": "kauhsik@8020",
       "UserID": "User3"
+    },
+    {
+      "Name": "Varshith Shetty",
+      "UserType": "retailer",
+      "Address": "Miyapur",
+      "Email": "Varshithshetty@gmail.com",
+      "Password": "Kaushik@8020",
+      "UserID": "User4"
+    },
+    {
+      "Name": "Pranay",
+      "UserType": "manufacturer",
+      "Address": "kokapet",
+      "Email": "pranaycbit29@gmail.com",
+      "Password": "kaushik@8020",
+      "UserID": "User5"
     }
   ]
 }
