@@ -4,6 +4,7 @@
 ![Issues](https://img.shields.io/github/issues/Kaushikgopuu/supplychain-hyperledger-fabric)
 ![Stars](https://img.shields.io/github/stars/Kaushikgopuu/supplychain-hyperledger-fabric)
 ![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-blue)
 
 A blockchain-based supply chain management system built on Hyperledger Fabric to ensure transparency, traceability, and authenticity of products. Supports role-based access for manufacturers, wholesalers, distributors, retailers, and consumers with chaincode in Go and a React.js frontend.
 
@@ -159,4 +160,16 @@ Refer to the detailed commands in the original docs if you need a fully scripted
 Tip: LAN access
 
 If you want to open the dev server to your LAN, start with `HOST=0.0.0.0` (React) or bind Express to `0.0.0.0`. Then access via your machine IP, e.g. `http://192.168.x.x:3000`.
+
+## Contributing
+
+Contributions are welcome! To propose changes:
+
+1. Fork the repo and create a new branch: `git checkout -b feat/your-feature`
+2. Make your changes with clear commits
+3. Run and verify locally (see How to run)
+4. Push your branch and open a Pull Request to `main`
+5. Describe the change, screenshots (if UI), and testing steps
+
+For small fixes, feel free to open an issue or PR directly.
 
