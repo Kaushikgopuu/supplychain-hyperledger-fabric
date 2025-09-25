@@ -33,6 +33,12 @@ jobs:
         working-directory: web-app/client
         run: npm ci || npm install
 
+      - name: Cache client build cache
+        uses: actions/cache@v4
+        with:
+          path: web-app/client/node_modules/.cache
+          key: ${{ runner.os }}-client-cache-${{ matrix.node-version }}-${{ hashFiles('web-app/client/package-lock.json') }}
+
       - name: Build client
         working-directory: web-app/client
         run: npm run build --if-present
@@ -41,7 +47,7 @@ jobs:
         working-directory: web-app/client
         run: npm run lint --if-present
 
-      - name: Backend smoke test (/health)
+    - name: Backend smoke test (health + inspectors)
         working-directory: web-app/servers
         env:
           DEV_FAKE_STORAGE: 'true'
@@ -60,5 +66,10 @@ jobs:
             if [ "$STATUS" = "200" ]; then echo "Health OK"; break; fi
             sleep 1
           done
-          if [ "$STATUS" != "200" ]; then echo "Server failed to start"; kill $PID || true; exit 1; fi
+      if [ "$STATUS" != "200" ]; then echo "Server failed to start"; kill $PID || true; exit 1; fi
+      # Quick inspector checks
+      DB_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8090/__db || true)
+      DEV_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8090/__devdump || true)
+      echo "/__db => $DB_STATUS, /__devdump => $DEV_STATUS"
+      if [ "$DB_STATUS" != "200" ] || [ "$DEV_STATUS" != "200" ]; then echo "Inspector endpoints not healthy"; kill $PID || true; exit 1; fi
           kill $PID || true
