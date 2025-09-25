@@ -5,6 +5,7 @@
 ![Stars](https://img.shields.io/github/stars/Kaushikgopuu/supplychain-hyperledger-fabric)
 ![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
+[![CI](https://github.com/Kaushikgopuu/supplychain-hyperledger-fabric/actions/workflows/ci.yml/badge.svg)](https://github.com/Kaushikgopuu/supplychain-hyperledger-fabric/actions/workflows/ci.yml)
 
 A blockchain-based supply chain management system built on Hyperledger Fabric to ensure transparency, traceability, and authenticity of products. Supports role-based access for manufacturers, wholesalers, distributors, retailers, and consumers with chaincode in Go and a React.js frontend.
 
