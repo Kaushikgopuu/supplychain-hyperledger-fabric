@@ -1,0 +1,162 @@
+version: '3.8'
+
+services:
+  # Hyperledger Fabric CA
+  ca.manufacturer.supplychain.com:
+    image: hyperledger/fabric-ca:latest
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca.manufacturer.supplychain.com
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_PORT=7054
+    ports:
+      - "7054:7054"
+    command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+    volumes:
+      - ./fabric-network/crypto-config/peerOrganizations/manufacturer.supplychain.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca.manufacturer.supplychain.com
+    networks:
+      - supplychain
+
+  ca.distributor.supplychain.com:
+    image: hyperledger/fabric-ca:latest
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca.distributor.supplychain.com
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_PORT=8054
+    ports:
+      - "8054:8054"
+    command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+    volumes:
+      - ./fabric-network/crypto-config/peerOrganizations/distributor.supplychain.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca.distributor.supplychain.com
+    networks:
+      - supplychain
+
+  ca.retailer.supplychain.com:
+    image: hyperledger/fabric-ca:latest
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca.retailer.supplychain.com
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_PORT=9054
+    ports:
+      - "9054:9054"
+    command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+    volumes:
+      - ./fabric-network/crypto-config/peerOrganizations/retailer.supplychain.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca.retailer.supplychain.com
+    networks:
+      - supplychain
+
+  # Orderer
+  orderer.supplychain.com:
+    extends:
+      file: fabric-network/docker/docker-compose-base.yaml
+      service: orderer.supplychain.com
+    container_name: orderer.supplychain.com
+    networks:
+      - supplychain
+
+  # Peers
+  peer0.manufacturer.supplychain.com:
+    container_name: peer0.manufacturer.supplychain.com
+    extends:
+      file: fabric-network/docker/docker-compose-base.yaml
+      service: peer0.manufacturer.supplychain.com
+    networks:
+      - supplychain
+
+  peer0.distributor.supplychain.com:
+    container_name: peer0.distributor.supplychain.com
+    extends:
+      file: fabric-network/docker/docker-compose-base.yaml
+      service: peer0.distributor.supplychain.com
+    networks:
+      - supplychain
+
+  peer0.retailer.supplychain.com:
+    container_name: peer0.retailer.supplychain.com
+    extends:
+      file: fabric-network/docker/docker-compose-base.yaml
+      service: peer0.retailer.supplychain.com
+    networks:
+      - supplychain
+
+  # CLI
+  cli:
+    container_name: cli
+    image: hyperledger/fabric-tools:latest
+    tty: true
+    stdin_open: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=INFO
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.manufacturer.supplychain.com:7051
+      - CORE_PEER_LOCALMSPID=ManufacturerMSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/manufacturer.supplychain.com/peers/peer0.manufacturer.supplychain.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/manufacturer.supplychain.com/peers/peer0.manufacturer.supplychain.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/manufacturer.supplychain.com/peers/peer0.manufacturer.supplychain.com/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/manufacturer.supplychain.com/users/Admin@manufacturer.supplychain.com/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+      - /var/run/:/host/var/run/
+      - ./chaincode/:/opt/gopath/src/github.com/chaincode
+      - ./fabric-network/crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+      - ./fabric-network/scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+      - ./fabric-network/channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+    depends_on:
+      - orderer.supplychain.com
+      - peer0.manufacturer.supplychain.com
+      - peer0.distributor.supplychain.com
+      - peer0.retailer.supplychain.com
+    networks:
+      - supplychain
+
+  # Node.js Middleware API
+  middleware-api:
+    build:
+      context: ./middleware/node
+      dockerfile: Dockerfile
+    container_name: middleware-api
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+    volumes:
+      - ./middleware/node:/app
+      - ./fabric-network/crypto-config:/app/crypto-config
+    depends_on:
+      - peer0.manufacturer.supplychain.com
+      - peer0.distributor.supplychain.com
+      - peer0.retailer.supplychain.com
+    networks:
+      - supplychain
+
+  # React.js Frontend
+  frontend:
+    build:
+      context: ./frontend/react
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:3001
+    volumes:
+      - ./frontend/react:/app
+      - /app/node_modules
+    depends_on:
+      - middleware-api
+    networks:
+      - supplychain
+
+networks:
+  supplychain:
+    driver: bridge
