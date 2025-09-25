@@ -1,5 +1,10 @@
 # supplychain-hyperledger-fabric
 
+![Last commit](https://img.shields.io/github/last-commit/Kaushikgopuu/supplychain-hyperledger-fabric)
+![Issues](https://img.shields.io/github/issues/Kaushikgopuu/supplychain-hyperledger-fabric)
+![Stars](https://img.shields.io/github/stars/Kaushikgopuu/supplychain-hyperledger-fabric)
+![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)
+
 A blockchain-based supply chain management system built on Hyperledger Fabric to ensure transparency, traceability, and authenticity of products. Supports role-based access for manufacturers, wholesalers, distributors, retailers, and consumers with chaincode in Go and a React.js frontend.
 
 ## Objective
@@ -82,6 +87,46 @@ Dev mode env flags you can use:
 - SKIP_FABRIC_ENROLL=true
 - SERVE_CLIENT=true (to serve the React build from Express)
 
+## How to run (development)
+
+Run backend and frontend separately for fast dev feedback.
+
+```bash
+# 1) Backend (API only on port 8090)
+cd web-app/servers
+npm install
+DEV_FAKE_STORAGE=true ALLOW_DEV_LOGIN=true SKIP_FABRIC_ENROLL=true SERVE_CLIENT=false PORT=8090 npm start
+
+# In a new terminal
+# 2) Frontend (React dev server on port 3000)
+cd web-app/client
+npm install
+BROWSER=none PORT=3000 npm start
+```
+
+- API: http://localhost:8090/health
+- UI: http://localhost:3000/
+- Inspect data: http://localhost:8090/__devdump and http://localhost:8090/__db
+
+## How to run (single-port, serve React from Express)
+
+Build the React app then serve it from Express at the same port.
+
+```bash
+# Build UI
+cd web-app/client
+npm install
+npm run build
+
+# Serve UI via Express on port 8090
+cd ../servers
+SERVE_CLIENT=true DEV_FAKE_STORAGE=true ALLOW_DEV_LOGIN=true SKIP_FABRIC_ENROLL=true PORT=8090 npm start
+```
+
+- Visit UI: http://localhost:8090/
+- API health: http://localhost:8090/health
+- Data inspectors: http://localhost:8090/__devdump and http://localhost:8090/__db
+
 ## Bring up the Fabric network (scripts)
 
 ```bash
@@ -110,4 +155,8 @@ Refer to the detailed commands in the original docs if you need a fully scripted
 - Inspect endpoints when server is running:
     - `GET /__devdump` (dev store)
     - `GET /__db` (audit summary)
+
+Tip: LAN access
+
+If you want to open the dev server to your LAN, start with `HOST=0.0.0.0` (React) or bind Express to `0.0.0.0`. Then access via your machine IP, e.g. `http://192.168.x.x:3000`.
 
