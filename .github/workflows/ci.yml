@@ -29,6 +29,14 @@ jobs:
         working-directory: web-app/servers
         run: npm ci || npm install
 
+      - name: Run server tests
+        working-directory: web-app/servers
+        env:
+          DEV_FAKE_STORAGE: 'true'
+          ALLOW_DEV_LOGIN: 'true'
+          SKIP_FABRIC_ENROLL: 'true'
+        run: npm test --silent
+
       - name: Install client deps
         working-directory: web-app/client
         run: npm ci || npm install
