@@ -7,7 +7,7 @@
         "start": "node app.js",
         "dev": "nodemon app.js",
         "start:fabric": "dotenv -e .env.fabric node app.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "jest --runInBand --testTimeout=30000"
     },
     "author": "Batch 5",
     "license": "ISC",
@@ -29,6 +29,8 @@
     "devDependencies": {
         "nodemon": "^2.0.22",
         "dotenv-cli": "^7.4.2",
+        "jest": "^29.7.0",
+        "supertest": "^6.3.4",
         "eslint": "^6.8.0",
         "eslint-config-airbnb-base": "^14.0.0",
         "eslint-config-prettier": "^6.10.0",

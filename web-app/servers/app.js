@@ -11,7 +11,7 @@ const path = require('path');
 const network = require('./fabric/network.js');
 const router = require('./routes/index.js');
 
-async function main() {
+async function createServer() {
     const dev = process.env.DEV_FAKE_STORAGE === 'true';
     if (!process.env.SKIP_FABRIC_ENROLL && !dev) {
         await network.enrollAdmin(true, false, false);
@@ -45,10 +45,16 @@ async function main() {
     // app.use((_req, res) => {
     //     return apiResponse.notFound(res);
     // });
-    const port = process.env.PORT || 8090;
-    app.listen(port, () => {
-        console.log(`API listening on http://localhost:${port}`);
+    return app;
+}
+// If run directly, start listening. In tests, we import createServer.
+if (require.main === module) {
+    createServer().then((app) => {
+        const port = process.env.PORT || 8090;
+        app.listen(port, () => {
+            console.log(`API listening on http://localhost:${port}`);
+        });
     });
 }
 
-main();
+module.exports = { createServer };
