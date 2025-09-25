@@ -33,6 +33,13 @@ Traditional supply chains lack transparency and interoperability, making it hard
 - Chaincode: Go
 
 ## Users
+## Requirements
+
+- Node.js 18 or newer (server and tests)
+    - The repo includes `.nvmrc`; switch with `nvm use`
+- npm (or yarn)
+- Docker + Docker Compose (for Fabric network scripts)
+
 
 - Manufacturer
 - Wholesaler
