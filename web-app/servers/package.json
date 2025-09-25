@@ -39,7 +39,7 @@
         "prettier": "^1.19.1"
     },
     "engines": {
-        "node": ">=10 <=12"
+        "node": ">=18"
     },
     "resolutions": {
         "minimist": "^1.2.5",
